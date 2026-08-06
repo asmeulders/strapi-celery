@@ -1,5 +1,14 @@
+const fs = require('fs');
+const path = require('path');
+
 module.exports = ({ env }) => {
   const client = env('DATABASE_CLIENT', 'mysql');
+
+  const sslCaPath = env('DATABASE_SSL_CA', path.join(__dirname, 'certs', 'rds-global-bundle.pem'));
+  const ssl = env.bool('DATABASE_SSL', false) && {
+    rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
+    ca: fs.existsSync(sslCaPath) ? fs.readFileSync(sslCaPath, 'utf8') : undefined,
+  };
 
   const connections = {
     mysql: {
@@ -9,9 +18,7 @@ module.exports = ({ env }) => {
         database: env('DATABASE_NAME', 'strapi'),
         user: env('DATABASE_USERNAME', 'strapi'),
         password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
+        ssl,
       },
       pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
     },
@@ -23,9 +30,7 @@ module.exports = ({ env }) => {
         database: env('DATABASE_NAME', 'strapi'),
         user: env('DATABASE_USERNAME', 'strapi'),
         password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
+        ssl,
       },
       pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
     },
