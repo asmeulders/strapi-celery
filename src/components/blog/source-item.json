@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_blog_source_items",
+  "info": {
+    "displayName": "Source Item",
+    "icon": "bookmark"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

@@ -440,6 +440,48 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
+  collectionName: 'authors';
+  info: {
+    displayName: 'Author';
+    pluralName: 'authors';
+    singularName: 'author';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    authorPageUrl: Schema.Attribute.String;
+    bio: Schema.Attribute.Text & Schema.Attribute.Required;
+    blogPosts: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-post.blog-post'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    credential: Schema.Attribute.String;
+    headshot: Schema.Attribute.Media<'images'>;
+    linkedInUrl: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::author.author'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    reviewedPosts: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-post.blog-post'
+    >;
+    role: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   collectionName: 'blog_posts';
   info: {
@@ -451,23 +493,52 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    author: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
     body: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    canonicalUrl: Schema.Attribute.String;
+    cardTitle: Schema.Attribute.String;
+    category: Schema.Attribute.Enumeration<
+      ['Selling Tips', 'Market News', 'Legal & Process', 'Investor Insights']
+    > &
+      Schema.Attribute.Required;
+    comparisonTable: Schema.Attribute.Component<'blog.comparison-row', true>;
     coverImage: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
-    >;
+    > &
+      Schema.Attribute.Required;
+    coverImageAlt: Schema.Attribute.String & Schema.Attribute.Required;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    dateModified: Schema.Attribute.Date & Schema.Attribute.Required;
+    datePublished: Schema.Attribute.Date & Schema.Attribute.Required;
+    dek: Schema.Attribute.Text;
+    editorialDisclaimer: Schema.Attribute.Text;
+    faq: Schema.Attribute.Component<'blog.faq-item', true>;
+    focusKeyword: Schema.Attribute.String;
+    imageCaption: Schema.Attribute.String;
+    inlineCtaBody: Schema.Attribute.Text;
+    inlineCtaButtonText: Schema.Attribute.String;
+    inlineCtaHeading: Schema.Attribute.String;
+    keyTakeaways: Schema.Attribute.Component<'blog.key-takeaway', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::blog-post.blog-post'
     > &
       Schema.Attribute.Private;
+    metaDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    metaTitle: Schema.Attribute.String & Schema.Attribute.Required;
+    noindex: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    ogDescription: Schema.Attribute.Text;
+    ogImage: Schema.Attribute.Media<'images'>;
+    ogTitle: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    seoDescription: Schema.Attribute.Text;
-    seoTitle: Schema.Attribute.String;
+    reviewedBy: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
+    scheduledPublishDate: Schema.Attribute.Date;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    sources: Schema.Attribute.Component<'blog.source-item', true>;
+    targetLocation: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -986,6 +1057,7 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::author.author': ApiAuthorAuthor;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
