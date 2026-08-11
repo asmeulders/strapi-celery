@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_blog_key_takeaways",
+  "info": {
+    "displayName": "Key Takeaway",
+    "icon": "check"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

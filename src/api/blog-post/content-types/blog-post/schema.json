@@ -15,20 +15,49 @@
       "type": "string",
       "required": true
     },
+    "cardTitle": {
+      "type": "string"
+    },
     "slug": {
       "type": "uid",
       "targetField": "title",
       "required": true
     },
-    "body": {
-      "type": "blocks",
+    "dek": {
+      "type": "text"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "Selling Tips",
+        "Market News",
+        "Legal & Process",
+        "Investor Insights"
+      ],
       "required": true
     },
-    "seoTitle": {
+    "targetLocation": {
       "type": "string"
     },
-    "seoDescription": {
-      "type": "text"
+    "author": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "inversedBy": "blogPosts"
+    },
+    "reviewedBy": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::author.author",
+      "inversedBy": "reviewedPosts"
+    },
+    "datePublished": {
+      "type": "date",
+      "required": true
+    },
+    "dateModified": {
+      "type": "date",
+      "required": true
     },
     "coverImage": {
       "type": "media",
@@ -38,7 +67,85 @@
         "files",
         "videos",
         "audios"
+      ],
+      "required": true
+    },
+    "coverImageAlt": {
+      "type": "string",
+      "required": true
+    },
+    "imageCaption": {
+      "type": "string"
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
       ]
+    },
+    "keyTakeaways": {
+      "type": "component",
+      "component": "blog.key-takeaway",
+      "repeatable": true
+    },
+    "body": {
+      "type": "blocks",
+      "required": true
+    },
+    "comparisonTable": {
+      "type": "component",
+      "component": "blog.comparison-row",
+      "repeatable": true
+    },
+    "inlineCtaHeading": {
+      "type": "string"
+    },
+    "inlineCtaBody": {
+      "type": "text"
+    },
+    "inlineCtaButtonText": {
+      "type": "string"
+    },
+    "faq": {
+      "type": "component",
+      "component": "blog.faq-item",
+      "repeatable": true
+    },
+    "sources": {
+      "type": "component",
+      "component": "blog.source-item",
+      "repeatable": true
+    },
+    "editorialDisclaimer": {
+      "type": "text"
+    },
+    "metaTitle": {
+      "type": "string",
+      "required": true
+    },
+    "metaDescription": {
+      "type": "text",
+      "required": true
+    },
+    "canonicalUrl": {
+      "type": "string"
+    },
+    "focusKeyword": {
+      "type": "string"
+    },
+    "ogTitle": {
+      "type": "string"
+    },
+    "ogDescription": {
+      "type": "text"
+    },
+    "noindex": {
+      "type": "boolean",
+      "default": false
+    },
+    "scheduledPublishDate": {
+      "type": "date"
     }
   }
 }

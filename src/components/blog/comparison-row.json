@@ -1,0 +1,38 @@
+{
+  "collectionName": "components_blog_comparison_rows",
+  "info": {
+    "displayName": "Comparison Row",
+    "icon": "layout-grid"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "agentColumn": {
+      "type": "string",
+      "required": true
+    },
+    "agentPositive": {
+      "type": "boolean",
+      "default": false
+    },
+    "fsboColumn": {
+      "type": "string",
+      "required": true
+    },
+    "fsboPositive": {
+      "type": "boolean",
+      "default": false
+    },
+    "cashColumn": {
+      "type": "string",
+      "required": true
+    },
+    "cashPositive": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
