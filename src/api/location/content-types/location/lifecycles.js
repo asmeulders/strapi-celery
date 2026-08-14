@@ -20,10 +20,6 @@ async function assertUniqueSlugAmongSiblings(data, currentDocumentId) {
     populate: { parent: true },
   });
 
-  strapi.log.info(
-    `[location uniqueness debug] slug=${data.slug} currentDocumentId=${currentDocumentId} parentValue=${JSON.stringify(parentValue)} data=${JSON.stringify(data)} candidates=${JSON.stringify(candidates)}`
-  );
-
   const conflict = candidates.find((candidate) => {
     if (candidate.documentId === currentDocumentId) return false;
     const candidateParentValue = candidate.parent ? candidate.parent.documentId : null;
@@ -40,7 +36,12 @@ async function assertUniqueSlugAmongSiblings(data, currentDocumentId) {
 module.exports = {
   async beforeCreate(event) {
     const { data } = event.params;
-    await assertUniqueSlugAmongSiblings(data, null);
+    // REST create for a draftAndPublish content type runs this hook twice --
+    // once for the draft row, once for the published counterpart -- and by
+    // the second pass `data.documentId` is already assigned to the document
+    // being created. Without excluding it, that second pass finds its own
+    // just-created draft row and reports a false conflict.
+    await assertUniqueSlugAmongSiblings(data, data.documentId ?? null);
   },
   async beforeUpdate(event) {
     const { data, where } = event.params;
