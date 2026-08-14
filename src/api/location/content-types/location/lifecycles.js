@@ -21,7 +21,7 @@ async function assertUniqueSlugAmongSiblings(data, currentDocumentId) {
   });
 
   strapi.log.info(
-    `[location uniqueness debug] slug=${data.slug} currentDocumentId=${currentDocumentId} parentValue=${JSON.stringify(parentValue)} candidates=${JSON.stringify(candidates)}`
+    `[location uniqueness debug] slug=${data.slug} currentDocumentId=${currentDocumentId} parentValue=${JSON.stringify(parentValue)} data=${JSON.stringify(data)} candidates=${JSON.stringify(candidates)}`
   );
 
   const conflict = candidates.find((candidate) => {
