@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_location_markets",
+  "info": {
+    "displayName": "Market",
+    "icon": "chartBubble"
+  },
+  "options": {},
+  "attributes": {
+    "medianPrice": {
+      "type": "string"
+    },
+    "avgDom": {
+      "type": "string"
+    },
+    "avgCommission": {
+      "type": "string"
+    },
+    "inventoryTrend": {
+      "type": "text"
+    },
+    "asOf": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    }
+  }
+}

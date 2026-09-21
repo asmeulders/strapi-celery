@@ -55,6 +55,112 @@
     },
     "contentBlocks": {
       "type": "blocks"
+    },
+    "hasPage": {
+      "type": "boolean",
+      "default": true
+    },
+    "sortOrder": {
+      "type": "integer"
+    },
+    "ogImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "heroImageAlt": {
+      "type": "string"
+    },
+    "homesBought": {
+      "type": "string"
+    },
+    "totalPaid": {
+      "type": "string"
+    },
+    "population": {
+      "type": "string"
+    },
+    "topMarkets": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::location.location"
+    },
+    "regionName": {
+      "type": "string"
+    },
+    "driveTime": {
+      "type": "string"
+    },
+    "mapEmbedSrc": {
+      "type": "text"
+    },
+    "answerBlock": {
+      "type": "text"
+    },
+    "localIntro": {
+      "type": "blocks"
+    },
+    "ownerOrigin": {
+      "type": "text"
+    },
+    "zips": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.string-item"
+    },
+    "neighborhoods": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.string-item"
+    },
+    "landmarks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.string-item"
+    },
+    "nearbyTowns": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::location.location"
+    },
+    "market": {
+      "type": "component",
+      "repeatable": false,
+      "component": "location.market"
+    },
+    "offerMath": {
+      "type": "component",
+      "repeatable": false,
+      "component": "location.offer-math"
+    },
+    "deals": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.deal"
+    },
+    "recentSellers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.recent-seller"
+    },
+    "testimonials": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.testimonial"
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.faq"
     }
   }
 }

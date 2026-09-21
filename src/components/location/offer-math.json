@@ -1,0 +1,34 @@
+{
+  "collectionName": "components_location_offer_maths",
+  "info": {
+    "displayName": "Offer Math",
+    "icon": "calculator"
+  },
+  "options": {},
+  "attributes": {
+    "cashOffer": {
+      "type": "string"
+    },
+    "listPrice": {
+      "type": "string"
+    },
+    "tradTime": {
+      "type": "string"
+    },
+    "commissionAmt": {
+      "type": "string"
+    },
+    "closingAmt": {
+      "type": "string"
+    },
+    "negotiationAmt": {
+      "type": "string"
+    },
+    "holdingAmt": {
+      "type": "string"
+    },
+    "tradNet": {
+      "type": "string"
+    }
+  }
+}

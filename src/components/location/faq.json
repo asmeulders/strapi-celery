@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_location_faqs",
+  "info": {
+    "displayName": "Location FAQ",
+    "icon": "question"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string"
+    },
+    "answer": {
+      "type": "text",
+      "required": true
+    }
+  }
+}
