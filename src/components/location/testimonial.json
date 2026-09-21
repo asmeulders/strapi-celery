@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_location_testimonials",
+  "info": {
+    "displayName": "Testimonial",
+    "icon": "quote"
+  },
+  "options": {},
+  "attributes": {
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "hood": {
+      "type": "string"
+    }
+  }
+}
