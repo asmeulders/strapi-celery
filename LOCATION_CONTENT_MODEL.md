@@ -182,6 +182,12 @@ Notes:
 - Field meanings: `hasPage` false = listed on the state directory as plain text with no route (only meaningful for cities); `sortOrder` orders counties on the state page; `homesBought`/`totalPaid`/`population` are scoped stats on **state and county** records; `topMarkets` is state-only (up to 4 cities); everything from `regionName` down is city-only.
 - Optionally group these in the admin (Content-Type Builder / edit view layout) so state-only and city-only fields are easy to tell apart. Not required.
 
+## Step 2b: confirm which database "local" Strapi is using (do this before any write)
+
+`config/database.js` reads `DATABASE_HOST` / `DATABASE_NAME` from `.env`. If `DATABASE_HOST` is an `*.amazonaws.com` host (or anything other than localhost), then `npm run develop` is talking to the **shared/production** database: content edits, the seed scripts, and even the schema auto-migration on boot all change production data, and webhooks configured in the admin are the production webhooks (they live in that database).
+
+Before Step 3 or 4, stop and confirm with the user. The recommended setup is a separate local database (e.g. MySQL in Docker: `DATABASE_HOST=localhost`, `DATABASE_SSL=false`, a fresh `DATABASE_NAME`), so experiments never touch production. Never edit or delete existing webhooks while pointed at a shared database.
+
 ## Step 3: run and verify locally
 
 1. `npm run develop`. Confirm it starts with no schema errors and that the Location entry form shows all the new fields. (Admin URL is normally http://localhost:1337/admin.)
