@@ -1,0 +1,20 @@
+# Local-only MySQL for developing Strapi against, completely separate from
+# the production RDS instance in .env. Not for deployment.
+#
+# Usage: docker compose -f docker-compose.local-db.yml up -d
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: strapi_local_root
+      MYSQL_DATABASE: strapi_local
+      MYSQL_USER: strapi_local
+      MYSQL_PASSWORD: strapi_local
+    ports:
+      - '3306:3306'
+    volumes:
+      - strapi_local_mysql:/var/lib/mysql
+
+volumes:
+  strapi_local_mysql:
