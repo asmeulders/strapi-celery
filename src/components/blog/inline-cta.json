@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_blog_inline_ctas",
+  "info": {
+    "displayName": "Inline CTA",
+    "icon": "cursor"
+  },
+  "options": {},
+  "attributes": {
+    "heading": {
+      "type": "string",
+      "required": true
+    },
+    "body": {
+      "type": "text",
+      "required": true
+    },
+    "buttonText": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

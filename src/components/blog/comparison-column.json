@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_blog_comparison_columns",
+  "info": {
+    "displayName": "Comparison Column",
+    "icon": "layout-grid"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
