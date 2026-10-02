@@ -12,7 +12,8 @@
     },
     "highlight": {
       "type": "string",
-      "description": "Optional CSS color (e.g. #C0392B) applied to this cell's text. Leave empty for no highlight."
+      "customField": "plugin::color-picker.color",
+      "description": "Optional color applied to this cell's text, saved as a hex string. Leave empty for no highlight."
     }
   }
 }

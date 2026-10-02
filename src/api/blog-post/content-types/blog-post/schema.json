@@ -93,11 +93,6 @@
       "type": "blocks",
       "required": true
     },
-    "comparisonTable": {
-      "type": "component",
-      "component": "blog.comparison-row",
-      "repeatable": true
-    },
     "inlineCtaHeading": {
       "type": "string"
     },
