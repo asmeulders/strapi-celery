@@ -107,6 +107,14 @@
     "inlineCtaButtonText": {
       "type": "string"
     },
+    "content": {
+      "type": "dynamiczone",
+      "components": [
+        "blog.rich-text",
+        "blog.comparison-table",
+        "blog.inline-cta"
+      ]
+    },
     "faq": {
       "type": "component",
       "component": "blog.faq-item",

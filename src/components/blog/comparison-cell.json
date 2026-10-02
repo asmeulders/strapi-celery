@@ -1,0 +1,18 @@
+{
+  "collectionName": "components_blog_comparison_cells",
+  "info": {
+    "displayName": "Comparison Cell",
+    "icon": "stack"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "highlight": {
+      "type": "string",
+      "description": "Optional CSS color (e.g. #C0392B) applied to this cell's text. Leave empty for no highlight."
+    }
+  }
+}

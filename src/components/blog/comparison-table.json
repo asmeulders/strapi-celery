@@ -1,0 +1,20 @@
+{
+  "collectionName": "components_blog_comparison_tables",
+  "info": {
+    "displayName": "Comparison Table",
+    "icon": "layout-grid"
+  },
+  "options": {},
+  "attributes": {
+    "columns": {
+      "type": "component",
+      "component": "blog.comparison-column",
+      "repeatable": true
+    },
+    "rows": {
+      "type": "component",
+      "component": "blog.comparison-table-row",
+      "repeatable": true
+    }
+  }
+}

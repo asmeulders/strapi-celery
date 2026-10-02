@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_blog_comparison_table_rows",
+  "info": {
+    "displayName": "Comparison Table Row",
+    "icon": "layout-grid"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "cells": {
+      "type": "component",
+      "component": "blog.comparison-cell",
+      "repeatable": true
+    }
+  }
+}
