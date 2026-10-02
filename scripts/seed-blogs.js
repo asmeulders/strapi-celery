@@ -326,6 +326,45 @@ const posts = [
   },
 ];
 
+// --- content zone -----------------------------------------------------------
+// The legacy flat comparisonTable field (agentColumn/agentPositive, etc.) was
+// removed from the blog-post schema in favor of the `content` dynamic zone's
+// blog.comparison-table component (generalized columns + a per-cell highlight
+// color). Post authoring below keeps the old flat `comparisonTable` shape
+// since it reads better as sample data; this converts it at seed time.
+function toComparisonTableBlock(rows) {
+  const columnLabels = ['List with an agent', 'Sell it yourself (FSBO)', 'Cash buyer (TrueNorth)'];
+  const highlight = (positive) => (positive ? '#16A34A' : '#C0392B');
+  return {
+    __component: 'blog.comparison-table',
+    columns: columnLabels.map((label) => ({ label })),
+    rows: rows.map((row) => ({
+      label: row.label,
+      cells: [
+        { value: row.agentColumn, highlight: highlight(row.agentPositive) },
+        { value: row.fsboColumn, highlight: highlight(row.fsboPositive) },
+        { value: row.cashColumn, highlight: highlight(row.cashPositive) },
+      ],
+    })),
+  };
+}
+
+function buildContentZone(post) {
+  const zone = [{ __component: 'blog.rich-text', content: post.body }];
+  if (post.comparisonTable && post.comparisonTable.length > 0) {
+    zone.push(toComparisonTableBlock(post.comparisonTable));
+  }
+  if (post.inlineCtaHeading && post.inlineCtaBody && post.inlineCtaButtonText) {
+    zone.push({
+      __component: 'blog.inline-cta',
+      heading: post.inlineCtaHeading,
+      body: post.inlineCtaBody,
+      buttonText: post.inlineCtaButtonText,
+    });
+  }
+  return zone;
+}
+
 // --- seeding ---------------------------------------------------------------
 const mimeOf = (file) => (file.endsWith('.png') ? 'image/png' : 'image/jpeg');
 
@@ -369,10 +408,11 @@ async function main() {
         continue;
       }
       const cover = await upload(app, image);
+      const { comparisonTable, ...postWithoutLegacyTable } = post;
       await app.documents(POST_UID).create({
         status: 'published',
         data: {
-          ...post,
+          ...postWithoutLegacyTable,
           slug,
           author: authorIds[author],
           reviewedBy: reviewedBy ? authorIds[reviewedBy] : null,
@@ -386,6 +426,7 @@ async function main() {
           ogTitle: post.title,
           ogDescription: post.dek,
           canonicalUrl: `/blog/${slug}`,
+          content: buildContentZone(post),
         },
       });
       console.log(`create ${slug}`);
