@@ -161,6 +161,12 @@
       "type": "component",
       "repeatable": true,
       "component": "location.faq"
+    },
+    "people": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::person.person",
+      "mappedBy": "locations"
     }
   }
 }

@@ -552,7 +552,7 @@ export interface ApiBusinessProfileBusinessProfile
   extends Struct.SingleTypeSchema {
   collectionName: 'business_profiles';
   info: {
-    description: 'Site-wide business facts (owner, office, hours, stats) shown on location and marketing pages. There is exactly one entry.';
+    description: 'Site-wide business facts (office, hours, stats) shown on location and marketing pages. There is exactly one entry. Real people live in the separate `person` collection, not here.';
     displayName: 'Business Profile';
     pluralName: 'business-profiles';
     singularName: 'business-profile';
@@ -561,7 +561,6 @@ export interface ApiBusinessProfileBusinessProfile
     draftAndPublish: true;
   };
   attributes: {
-    brokerLicense: Schema.Attribute.String;
     cashDays: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -577,7 +576,6 @@ export interface ApiBusinessProfileBusinessProfile
       Schema.Attribute.Private;
     offerTurnaround: Schema.Attribute.String;
     office: Schema.Attribute.Component<'business.office', false>;
-    owner: Schema.Attribute.Component<'business.owner', false>;
     pressMentions: Schema.Attribute.Component<'location.string-item', true>;
     publishedAt: Schema.Attribute.DateTime;
     rating: Schema.Attribute.String;
@@ -641,6 +639,7 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     ogImage: Schema.Attribute.Media<'images'>;
     ownerOrigin: Schema.Attribute.Text;
     parent: Schema.Attribute.Relation<'manyToOne', 'api::location.location'>;
+    people: Schema.Attribute.Relation<'manyToMany', 'api::person.person'>;
     population: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     recentSellers: Schema.Attribute.Component<'location.recent-seller', true>;
@@ -657,6 +656,47 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     zips: Schema.Attribute.Component<'location.string-item', true>;
+  };
+}
+
+export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
+  collectionName: 'people';
+  info: {
+    description: "A real team member, linked to the locations they personally service by office or living area. Also the About page's team roster, unfiltered.";
+    displayName: 'Person';
+    pluralName: 'people';
+    singularName: 'person';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    basedIn: Schema.Attribute.String;
+    bio: Schema.Attribute.Text & Schema.Attribute.Required;
+    brokerLicense: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    initials: Schema.Attribute.String & Schema.Attribute.Required;
+    linkedInUrl: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::person.person'
+    > &
+      Schema.Attribute.Private;
+    locations: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::location.location'
+    >;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    photo: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    role: Schema.Attribute.String & Schema.Attribute.Required;
+    sortOrder: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1175,6 +1215,7 @@ declare module '@strapi/strapi' {
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::business-profile.business-profile': ApiBusinessProfileBusinessProfile;
       'api::location.location': ApiLocationLocation;
+      'api::person.person': ApiPersonPerson;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

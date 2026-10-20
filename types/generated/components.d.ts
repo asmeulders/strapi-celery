@@ -120,21 +120,6 @@ export interface BusinessOffice extends Struct.ComponentSchema {
   };
 }
 
-export interface BusinessOwner extends Struct.ComponentSchema {
-  collectionName: 'components_business_owners';
-  info: {
-    displayName: 'Owner';
-    icon: 'user';
-  };
-  attributes: {
-    initials: Schema.Attribute.String & Schema.Attribute.Required;
-    linkedInUrl: Schema.Attribute.String;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    photo: Schema.Attribute.Media<'images'>;
-    role: Schema.Attribute.String & Schema.Attribute.Required;
-  };
-}
-
 export interface LocationDeal extends Struct.ComponentSchema {
   collectionName: 'components_location_deals';
   info: {
@@ -250,7 +235,6 @@ declare module '@strapi/strapi' {
       'blog.rich-text': BlogRichText;
       'blog.source-item': BlogSourceItem;
       'business.office': BusinessOffice;
-      'business.owner': BusinessOwner;
       'location.deal': LocationDeal;
       'location.faq': LocationFaq;
       'location.market': LocationMarket;
