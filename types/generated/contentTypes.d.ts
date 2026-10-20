@@ -501,7 +501,9 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
       ['Selling Tips', 'Market News', 'Legal & Process', 'Investor Insights']
     > &
       Schema.Attribute.Required;
-    comparisonTable: Schema.Attribute.Component<'blog.comparison-row', true>;
+    content: Schema.Attribute.DynamicZone<
+      ['blog.rich-text', 'blog.comparison-table', 'blog.inline-cta']
+    >;
     coverImage: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     > &
@@ -540,6 +542,47 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     sources: Schema.Attribute.Component<'blog.source-item', true>;
     targetLocation: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiBusinessProfileBusinessProfile
+  extends Struct.SingleTypeSchema {
+  collectionName: 'business_profiles';
+  info: {
+    description: 'Site-wide business facts (owner, office, hours, stats) shown on location and marketing pages. There is exactly one entry.';
+    displayName: 'Business Profile';
+    pluralName: 'business-profiles';
+    singularName: 'business-profile';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    brokerLicense: Schema.Attribute.String;
+    cashDays: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    googleBusinessProfileUrl: Schema.Attribute.String;
+    homesBought: Schema.Attribute.String;
+    hours: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::business-profile.business-profile'
+    > &
+      Schema.Attribute.Private;
+    offerTurnaround: Schema.Attribute.String;
+    office: Schema.Attribute.Component<'business.office', false>;
+    owner: Schema.Attribute.Component<'business.owner', false>;
+    pressMentions: Schema.Attribute.Component<'location.string-item', true>;
+    publishedAt: Schema.Attribute.DateTime;
+    rating: Schema.Attribute.String;
+    reviewCount: Schema.Attribute.String;
+    totalPaid: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1130,6 +1173,7 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::author.author': ApiAuthorAuthor;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
+      'api::business-profile.business-profile': ApiBusinessProfileBusinessProfile;
       'api::location.location': ApiLocationLocation;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

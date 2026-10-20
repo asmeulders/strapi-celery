@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_business_offices",
+  "info": {
+    "displayName": "Office",
+    "icon": "pinMap"
+  },
+  "options": {},
+  "attributes": {
+    "street": {
+      "type": "string",
+      "required": true
+    },
+    "city": {
+      "type": "string",
+      "required": true
+    },
+    "state": {
+      "type": "string",
+      "required": true
+    },
+    "zip": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

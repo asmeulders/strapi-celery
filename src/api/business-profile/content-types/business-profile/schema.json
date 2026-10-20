@@ -1,0 +1,58 @@
+{
+  "kind": "singleType",
+  "collectionName": "business_profiles",
+  "info": {
+    "singularName": "business-profile",
+    "pluralName": "business-profiles",
+    "displayName": "Business Profile",
+    "description": "Site-wide business facts (owner, office, hours, stats) shown on location and marketing pages. There is exactly one entry."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "rating": {
+      "type": "string"
+    },
+    "reviewCount": {
+      "type": "string"
+    },
+    "homesBought": {
+      "type": "string"
+    },
+    "totalPaid": {
+      "type": "string"
+    },
+    "cashDays": {
+      "type": "string"
+    },
+    "offerTurnaround": {
+      "type": "string"
+    },
+    "googleBusinessProfileUrl": {
+      "type": "string"
+    },
+    "hours": {
+      "type": "string"
+    },
+    "brokerLicense": {
+      "type": "string"
+    },
+    "office": {
+      "type": "component",
+      "repeatable": false,
+      "component": "business.office"
+    },
+    "owner": {
+      "type": "component",
+      "repeatable": false,
+      "component": "business.owner"
+    },
+    "pressMentions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "location.string-item"
+    }
+  }
+}
