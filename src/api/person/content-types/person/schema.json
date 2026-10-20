@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "people",
+  "info": {
+    "singularName": "person",
+    "pluralName": "people",
+    "displayName": "Person",
+    "description": "A real team member, linked to the locations they personally service by office or living area. Also the About page's team roster, unfiltered."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "initials": {
+      "type": "string",
+      "required": true
+    },
+    "role": {
+      "type": "string",
+      "required": true
+    },
+    "bio": {
+      "type": "text",
+      "required": true
+    },
+    "photo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "linkedInUrl": {
+      "type": "string"
+    },
+    "basedIn": {
+      "type": "string"
+    },
+    "brokerLicense": {
+      "type": "string"
+    },
+    "sortOrder": {
+      "type": "integer"
+    },
+    "locations": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::location.location",
+      "inversedBy": "people"
+    }
+  }
+}

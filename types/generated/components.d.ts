@@ -1,18 +1,49 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
-export interface BlogComparisonRow extends Struct.ComponentSchema {
-  collectionName: 'components_blog_comparison_rows';
+export interface BlogComparisonCell extends Struct.ComponentSchema {
+  collectionName: 'components_blog_comparison_cells';
   info: {
-    displayName: 'Comparison Row';
+    displayName: 'Comparison Cell';
+    icon: 'stack';
+  };
+  attributes: {
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.CustomField<'plugin::color-picker.color'>;
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface BlogComparisonColumn extends Struct.ComponentSchema {
+  collectionName: 'components_blog_comparison_columns';
+  info: {
+    displayName: 'Comparison Column';
     icon: 'layout-grid';
   };
   attributes: {
-    agentColumn: Schema.Attribute.String & Schema.Attribute.Required;
-    agentPositive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    cashColumn: Schema.Attribute.String & Schema.Attribute.Required;
-    cashPositive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
-    fsboColumn: Schema.Attribute.String & Schema.Attribute.Required;
-    fsboPositive: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface BlogComparisonTable extends Struct.ComponentSchema {
+  collectionName: 'components_blog_comparison_tables';
+  info: {
+    displayName: 'Comparison Table';
+    icon: 'layout-grid';
+  };
+  attributes: {
+    columns: Schema.Attribute.Component<'blog.comparison-column', true>;
+    rows: Schema.Attribute.Component<'blog.comparison-table-row', true>;
+  };
+}
+
+export interface BlogComparisonTableRow extends Struct.ComponentSchema {
+  collectionName: 'components_blog_comparison_table_rows';
+  info: {
+    displayName: 'Comparison Table Row';
+    icon: 'layout-grid';
+  };
+  attributes: {
+    cells: Schema.Attribute.Component<'blog.comparison-cell', true>;
     label: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -29,6 +60,19 @@ export interface BlogFaqItem extends Struct.ComponentSchema {
   };
 }
 
+export interface BlogInlineCta extends Struct.ComponentSchema {
+  collectionName: 'components_blog_inline_ctas';
+  info: {
+    displayName: 'Inline CTA';
+    icon: 'cursor';
+  };
+  attributes: {
+    body: Schema.Attribute.Text & Schema.Attribute.Required;
+    buttonText: Schema.Attribute.String & Schema.Attribute.Required;
+    heading: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface BlogKeyTakeaway extends Struct.ComponentSchema {
   collectionName: 'components_blog_key_takeaways';
   info: {
@@ -40,6 +84,17 @@ export interface BlogKeyTakeaway extends Struct.ComponentSchema {
   };
 }
 
+export interface BlogRichText extends Struct.ComponentSchema {
+  collectionName: 'components_blog_rich_texts';
+  info: {
+    displayName: 'Rich Text';
+    icon: 'align-left';
+  };
+  attributes: {
+    content: Schema.Attribute.Blocks & Schema.Attribute.Required;
+  };
+}
+
 export interface BlogSourceItem extends Struct.ComponentSchema {
   collectionName: 'components_blog_source_items';
   info: {
@@ -48,6 +103,20 @@ export interface BlogSourceItem extends Struct.ComponentSchema {
   };
   attributes: {
     text: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface BusinessOffice extends Struct.ComponentSchema {
+  collectionName: 'components_business_offices';
+  info: {
+    displayName: 'Office';
+    icon: 'pinMap';
+  };
+  attributes: {
+    city: Schema.Attribute.String & Schema.Attribute.Required;
+    state: Schema.Attribute.String & Schema.Attribute.Required;
+    street: Schema.Attribute.String & Schema.Attribute.Required;
+    zip: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -77,7 +146,7 @@ export interface LocationFaq extends Struct.ComponentSchema {
   };
   attributes: {
     answer: Schema.Attribute.Text & Schema.Attribute.Required;
-    question: Schema.Attribute.String;
+    question: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -156,10 +225,16 @@ export interface LocationTestimonial extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
-      'blog.comparison-row': BlogComparisonRow;
+      'blog.comparison-cell': BlogComparisonCell;
+      'blog.comparison-column': BlogComparisonColumn;
+      'blog.comparison-table': BlogComparisonTable;
+      'blog.comparison-table-row': BlogComparisonTableRow;
       'blog.faq-item': BlogFaqItem;
+      'blog.inline-cta': BlogInlineCta;
       'blog.key-takeaway': BlogKeyTakeaway;
+      'blog.rich-text': BlogRichText;
       'blog.source-item': BlogSourceItem;
+      'business.office': BusinessOffice;
       'location.deal': LocationDeal;
       'location.faq': LocationFaq;
       'location.market': LocationMarket;

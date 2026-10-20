@@ -501,7 +501,9 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
       ['Selling Tips', 'Market News', 'Legal & Process', 'Investor Insights']
     > &
       Schema.Attribute.Required;
-    comparisonTable: Schema.Attribute.Component<'blog.comparison-row', true>;
+    content: Schema.Attribute.DynamicZone<
+      ['blog.rich-text', 'blog.comparison-table', 'blog.inline-cta']
+    >;
     coverImage: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     > &
@@ -540,6 +542,45 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     sources: Schema.Attribute.Component<'blog.source-item', true>;
     targetLocation: Schema.Attribute.String;
     title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiBusinessProfileBusinessProfile
+  extends Struct.SingleTypeSchema {
+  collectionName: 'business_profiles';
+  info: {
+    description: 'Site-wide business facts (office, hours, stats) shown on location and marketing pages. There is exactly one entry. Real people live in the separate `person` collection, not here.';
+    displayName: 'Business Profile';
+    pluralName: 'business-profiles';
+    singularName: 'business-profile';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cashDays: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    googleBusinessProfileUrl: Schema.Attribute.String;
+    homesBought: Schema.Attribute.String;
+    hours: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::business-profile.business-profile'
+    > &
+      Schema.Attribute.Private;
+    offerTurnaround: Schema.Attribute.String;
+    office: Schema.Attribute.Component<'business.office', false>;
+    pressMentions: Schema.Attribute.Component<'location.string-item', true>;
+    publishedAt: Schema.Attribute.DateTime;
+    rating: Schema.Attribute.String;
+    reviewCount: Schema.Attribute.String;
+    totalPaid: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -598,6 +639,7 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     ogImage: Schema.Attribute.Media<'images'>;
     ownerOrigin: Schema.Attribute.Text;
     parent: Schema.Attribute.Relation<'manyToOne', 'api::location.location'>;
+    people: Schema.Attribute.Relation<'manyToMany', 'api::person.person'>;
     population: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     recentSellers: Schema.Attribute.Component<'location.recent-seller', true>;
@@ -614,6 +656,47 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     zips: Schema.Attribute.Component<'location.string-item', true>;
+  };
+}
+
+export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
+  collectionName: 'people';
+  info: {
+    description: "A real team member, linked to the locations they personally service by office or living area. Also the About page's team roster, unfiltered.";
+    displayName: 'Person';
+    pluralName: 'people';
+    singularName: 'person';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    basedIn: Schema.Attribute.String;
+    bio: Schema.Attribute.Text & Schema.Attribute.Required;
+    brokerLicense: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    initials: Schema.Attribute.String & Schema.Attribute.Required;
+    linkedInUrl: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::person.person'
+    > &
+      Schema.Attribute.Private;
+    locations: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::location.location'
+    >;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    photo: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    role: Schema.Attribute.String & Schema.Attribute.Required;
+    sortOrder: Schema.Attribute.Integer;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1130,7 +1213,9 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::author.author': ApiAuthorAuthor;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
+      'api::business-profile.business-profile': ApiBusinessProfileBusinessProfile;
       'api::location.location': ApiLocationLocation;
+      'api::person.person': ApiPersonPerson;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
