@@ -638,7 +638,6 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     people: Schema.Attribute.Relation<'manyToMany', 'api::person.person'>;
     population: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    recentSellers: Schema.Attribute.Component<'location.recent-seller', true>;
     slug: Schema.Attribute.String & Schema.Attribute.Required;
     sortOrder: Schema.Attribute.Integer;
     testimonials: Schema.Attribute.Component<'location.testimonial', true>;

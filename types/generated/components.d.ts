@@ -149,20 +149,6 @@ export interface LocationFaq extends Struct.ComponentSchema {
   };
 }
 
-export interface LocationRecentSeller extends Struct.ComponentSchema {
-  collectionName: 'components_location_recent_sellers';
-  info: {
-    displayName: 'Recent Seller';
-    icon: 'user';
-  };
-  attributes: {
-    closedDate: Schema.Attribute.String;
-    firstName: Schema.Attribute.String & Schema.Attribute.Required;
-    street: Schema.Attribute.String & Schema.Attribute.Required;
-    zip: Schema.Attribute.String;
-  };
-}
-
 export interface LocationStringItem extends Struct.ComponentSchema {
   collectionName: 'components_location_string_items';
   info: {
@@ -202,7 +188,6 @@ declare module '@strapi/strapi' {
       'business.office': BusinessOffice;
       'location.deal': LocationDeal;
       'location.faq': LocationFaq;
-      'location.recent-seller': LocationRecentSeller;
       'location.string-item': LocationStringItem;
       'location.testimonial': LocationTestimonial;
     }
