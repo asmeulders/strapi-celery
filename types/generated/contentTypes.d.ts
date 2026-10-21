@@ -625,6 +625,7 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Required;
     longitude: Schema.Attribute.Decimal;
+    marketCommentary: Schema.Attribute.Text;
     metaDescription: Schema.Attribute.Text;
     metaTitle: Schema.Attribute.String;
     name: Schema.Attribute.String & Schema.Attribute.Required;
