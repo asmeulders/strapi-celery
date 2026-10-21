@@ -27,14 +27,10 @@
       "type": "text"
     },
     "category": {
-      "type": "enumeration",
-      "enum": [
-        "Selling Tips",
-        "Market News",
-        "Legal & Process",
-        "Investor Insights"
-      ],
-      "required": true
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::category.category",
+      "inversedBy": "blogPosts"
     },
     "targetLocation": {
       "type": "string"
