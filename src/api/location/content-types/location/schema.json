@@ -94,23 +94,8 @@
       "relation": "manyToMany",
       "target": "api::location.location"
     },
-    "regionName": {
+    "county": {
       "type": "string"
-    },
-    "driveTime": {
-      "type": "string"
-    },
-    "mapEmbedSrc": {
-      "type": "text"
-    },
-    "answerBlock": {
-      "type": "text"
-    },
-    "localIntro": {
-      "type": "blocks"
-    },
-    "ownerOrigin": {
-      "type": "text"
     },
     "zips": {
       "type": "component",
@@ -132,25 +117,10 @@
       "relation": "manyToMany",
       "target": "api::location.location"
     },
-    "market": {
-      "type": "component",
-      "repeatable": false,
-      "component": "location.market"
-    },
-    "offerMath": {
-      "type": "component",
-      "repeatable": false,
-      "component": "location.offer-math"
-    },
     "deals": {
       "type": "component",
       "repeatable": true,
       "component": "location.deal"
-    },
-    "recentSellers": {
-      "type": "component",
-      "repeatable": true,
-      "component": "location.recent-seller"
     },
     "testimonials": {
       "type": "component",

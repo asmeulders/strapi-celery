@@ -33,6 +33,12 @@
     "googleBusinessProfileUrl": {
       "type": "string"
     },
+    "phoneDisplay": {
+      "type": "string"
+    },
+    "phoneTel": {
+      "type": "string"
+    },
     "hours": {
       "type": "string"
     },
