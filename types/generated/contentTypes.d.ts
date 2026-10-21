@@ -576,6 +576,8 @@ export interface ApiBusinessProfileBusinessProfile
       Schema.Attribute.Private;
     offerTurnaround: Schema.Attribute.String;
     office: Schema.Attribute.Component<'business.office', false>;
+    phoneDisplay: Schema.Attribute.String;
+    phoneTel: Schema.Attribute.String;
     pressMentions: Schema.Attribute.Component<'location.string-item', true>;
     publishedAt: Schema.Attribute.DateTime;
     rating: Schema.Attribute.String;
@@ -598,14 +600,13 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    answerBlock: Schema.Attribute.Text;
     children: Schema.Attribute.Relation<'oneToMany', 'api::location.location'>;
     contentBlocks: Schema.Attribute.Blocks;
+    county: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     deals: Schema.Attribute.Component<'location.deal', true>;
-    driveTime: Schema.Attribute.String;
     faqs: Schema.Attribute.Component<'location.faq', true>;
     hasPage: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
     heroImage: Schema.Attribute.Media<'images'>;
@@ -614,7 +615,6 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     landmarks: Schema.Attribute.Component<'location.string-item', true>;
     latitude: Schema.Attribute.Decimal;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localIntro: Schema.Attribute.Blocks;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
       'api::location.location'
@@ -625,8 +625,6 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     > &
       Schema.Attribute.Required;
     longitude: Schema.Attribute.Decimal;
-    mapEmbedSrc: Schema.Attribute.Text;
-    market: Schema.Attribute.Component<'location.market', false>;
     metaDescription: Schema.Attribute.Text;
     metaTitle: Schema.Attribute.String;
     name: Schema.Attribute.String & Schema.Attribute.Required;
@@ -635,15 +633,12 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
       'api::location.location'
     >;
     neighborhoods: Schema.Attribute.Component<'location.string-item', true>;
-    offerMath: Schema.Attribute.Component<'location.offer-math', false>;
     ogImage: Schema.Attribute.Media<'images'>;
-    ownerOrigin: Schema.Attribute.Text;
     parent: Schema.Attribute.Relation<'manyToOne', 'api::location.location'>;
     people: Schema.Attribute.Relation<'manyToMany', 'api::person.person'>;
     population: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     recentSellers: Schema.Attribute.Component<'location.recent-seller', true>;
-    regionName: Schema.Attribute.String;
     slug: Schema.Attribute.String & Schema.Attribute.Required;
     sortOrder: Schema.Attribute.Integer;
     testimonials: Schema.Attribute.Component<'location.testimonial', true>;

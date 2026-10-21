@@ -146,41 +146,6 @@ export interface LocationFaq extends Struct.ComponentSchema {
   };
   attributes: {
     answer: Schema.Attribute.Text & Schema.Attribute.Required;
-    question: Schema.Attribute.String & Schema.Attribute.Required;
-  };
-}
-
-export interface LocationMarket extends Struct.ComponentSchema {
-  collectionName: 'components_location_markets';
-  info: {
-    displayName: 'Market';
-    icon: 'chartBubble';
-  };
-  attributes: {
-    asOf: Schema.Attribute.String;
-    avgCommission: Schema.Attribute.String;
-    avgDom: Schema.Attribute.String;
-    inventoryTrend: Schema.Attribute.Text;
-    medianPrice: Schema.Attribute.String;
-    source: Schema.Attribute.String;
-  };
-}
-
-export interface LocationOfferMath extends Struct.ComponentSchema {
-  collectionName: 'components_location_offer_maths';
-  info: {
-    displayName: 'Offer Math';
-    icon: 'calculator';
-  };
-  attributes: {
-    cashOffer: Schema.Attribute.String;
-    closingAmt: Schema.Attribute.String;
-    commissionAmt: Schema.Attribute.String;
-    holdingAmt: Schema.Attribute.String;
-    listPrice: Schema.Attribute.String;
-    negotiationAmt: Schema.Attribute.String;
-    tradNet: Schema.Attribute.String;
-    tradTime: Schema.Attribute.String;
   };
 }
 
@@ -237,8 +202,6 @@ declare module '@strapi/strapi' {
       'business.office': BusinessOffice;
       'location.deal': LocationDeal;
       'location.faq': LocationFaq;
-      'location.market': LocationMarket;
-      'location.offer-math': LocationOfferMath;
       'location.recent-seller': LocationRecentSeller;
       'location.string-item': LocationStringItem;
       'location.testimonial': LocationTestimonial;
