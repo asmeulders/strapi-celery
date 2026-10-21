@@ -97,6 +97,9 @@
     "county": {
       "type": "string"
     },
+    "marketCommentary": {
+      "type": "text"
+    },
     "zips": {
       "type": "component",
       "repeatable": true,
