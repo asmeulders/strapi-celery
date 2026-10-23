@@ -497,10 +497,7 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     body: Schema.Attribute.Blocks & Schema.Attribute.Required;
     canonicalUrl: Schema.Attribute.String;
     cardTitle: Schema.Attribute.String;
-    category: Schema.Attribute.Enumeration<
-      ['Selling Tips', 'Market News', 'Legal & Process', 'Investor Insights']
-    > &
-      Schema.Attribute.Required;
+    category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     content: Schema.Attribute.DynamicZone<
       ['blog.rich-text', 'blog.comparison-table', 'blog.inline-cta']
     >;
@@ -583,6 +580,42 @@ export interface ApiBusinessProfileBusinessProfile
     rating: Schema.Attribute.String;
     reviewCount: Schema.Attribute.String;
     totalPaid: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
+  collectionName: 'categories';
+  info: {
+    displayName: 'Category';
+    pluralName: 'categories';
+    singularName: 'category';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    blogPosts: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-post.blog-post'
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::category.category'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1209,6 +1242,7 @@ declare module '@strapi/strapi' {
       'api::author.author': ApiAuthorAuthor;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::business-profile.business-profile': ApiBusinessProfileBusinessProfile;
+      'api::category.category': ApiCategoryCategory;
       'api::location.location': ApiLocationLocation;
       'api::person.person': ApiPersonPerson;
       'plugin::content-releases.release': PluginContentReleasesRelease;
