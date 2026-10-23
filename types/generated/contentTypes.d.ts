@@ -452,6 +452,7 @@ export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
   };
   attributes: {
     authorPageUrl: Schema.Attribute.String;
+    basedIn: Schema.Attribute.String;
     bio: Schema.Attribute.Text & Schema.Attribute.Required;
     blogPosts: Schema.Attribute.Relation<
       'oneToMany',
