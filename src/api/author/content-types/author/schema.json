@@ -39,6 +39,9 @@
     "credential": {
       "type": "string"
     },
+    "basedIn": {
+      "type": "string"
+    },
     "blogPosts": {
       "type": "relation",
       "relation": "oneToMany",
