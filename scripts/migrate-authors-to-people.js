@@ -8,7 +8,11 @@
  * table and its link tables, so the author data and every post's
  * author/reviewedBy names have to be captured to disk first.
  *
- * Pass 1 — run with the OLD schema still in place (author content-type exists):
+ * Pass 1 — `export`. Reads the OLD database with plain read-only SQL and never boots
+ * Strapi, because booting Strapi syncs the DB to the checked-out schema and, on the
+ * new schema, drops the author table and legacy blog-post columns. That also means
+ * `export` is safe to run from any checkout/branch, but it MUST run before the new
+ * schema has ever been booted or deployed against that database:
  *   railway run node scripts/migrate-authors-to-people.js export --dry-run   # preview
  *   railway run node scripts/migrate-authors-to-people.js export             # writes map
  *
@@ -17,7 +21,8 @@
  *   of the legacy blog-post fields this schema change removes (body,
  *   inlineCta*, imageCaption, editorialDisclaimer, focusKeyword). Aborts if any
  *   post version has an empty `content` dynamic zone, because `body` is the
- *   only copy of that post's text and has to be hand-ported first.
+ *   only copy of that post's text and has to be hand-ported first. Refuses to run
+ *   if the database already looks migrated (no author table / person link columns).
  *
  * --- deploy the new schema (author removed, person merged), reboot ---
  *
@@ -41,12 +46,10 @@ const fs = require('fs');
 const path = require('path');
 const { createStrapi, compileStrapi } = require('@strapi/strapi');
 
-const AUTHOR_UID = 'api::author.author';
 const PERSON_UID = 'api::person.person';
 const POST_UID = 'api::blog-post.blog-post';
 const MAP_PATH = path.join(__dirname, 'author-migration-map.json');
 
-const LEGACY_POST_FIELDS = ['body', 'inlineCtaHeading', 'inlineCtaBody', 'inlineCtaButtonText', 'imageCaption', 'editorialDisclaimer', 'focusKeyword'];
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
@@ -65,56 +68,107 @@ const normalizeName = (name) => name.trim().toLowerCase().replace(/\s+/g, ' ');
 const isEmpty = (value) => value === null || value === undefined || value === '';
 const statusOf = (row) => (row.publishedAt ? 'published' : 'draft');
 
-async function exportPass(app) {
-  const authors = await app.db.query(AUTHOR_UID).findMany({ populate: { headshot: { select: ['id'] } } });
-  const authorEntries = authors.map((a) => ({
-    documentId: a.documentId,
-    name: a.name,
-    role: a.role,
-    bio: a.bio,
-    linkedInUrl: a.linkedInUrl ?? null,
-    basedIn: a.basedIn ?? null,
-    headshotId: a.headshot?.id ?? null,
-  }));
-
-  const posts = await app.db.query(POST_UID).findMany({
-    populate: {
-      author: { select: ['documentId'] },
-      reviewedBy: { select: ['documentId'] },
-      content: true,
-    },
+async function connect() {
+  const mysql = require('mysql2/promise');
+  const env = process.env;
+  const sslCaPath = env.DATABASE_SSL_CA || path.join(__dirname, '..', 'config', 'certs', 'rds-global-bundle.pem');
+  const ssl =
+    env.DATABASE_SSL === 'true'
+      ? {
+          rejectUnauthorized: env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+          ca: fs.existsSync(sslCaPath) ? fs.readFileSync(sslCaPath, 'utf8') : undefined,
+        }
+      : undefined;
+  const connection = await mysql.createConnection({
+    host: env.DATABASE_HOST || 'localhost',
+    port: Number(env.DATABASE_PORT || 3306),
+    database: env.DATABASE_NAME || 'strapi',
+    user: env.DATABASE_USERNAME || 'strapi',
+    password: env.DATABASE_PASSWORD || 'strapi',
+    ssl,
   });
+  await connection.query('SET SESSION TRANSACTION READ ONLY');
+  console.log(`connected (read-only) to ${env.DATABASE_HOST || 'localhost'} / ${env.DATABASE_NAME || 'strapi'}`);
+  return connection;
+}
 
-  const emptyContent = posts.filter((p) => !p.content || p.content.length === 0);
-  if (emptyContent.length > 0) {
-    for (const p of emptyContent) console.error(`${p.slug} (${statusOf(p)}): empty \`content\` dynamic zone`);
-    throw new Error(
-      `${emptyContent.length} blog-post version(s) have no \`content\` blocks. Move their \`body\` into the content zone before removing \`body\`.`
+async function exportPass() {
+  const db = await connect();
+  try {
+    const [tables] = await db.query("SHOW TABLES LIKE 'authors'");
+    const [linkColumns] = await db.query("SHOW COLUMNS FROM blog_posts_author_lnk LIKE 'author_id'");
+    if (tables.length === 0 || linkColumns.length === 0) {
+      throw new Error(
+        'This database has no `authors` table / `author_id` link column — the new schema has already been synced to it, ' +
+          'so the author data is gone from the live tables. Restore from a backup taken before that, then run export again.'
+      );
+    }
+
+    const [authorRows] = await db.query('SELECT * FROM authors');
+    const [headshots] = await db.query(
+      "SELECT related_id, file_id FROM files_related_mph WHERE related_type = 'api::author.author' AND field = 'headshot'"
     );
-  }
+    const headshotByAuthor = new Map(headshots.map((h) => [h.related_id, h.file_id]));
+    const authorEntries = authorRows.map((a) => ({
+      documentId: a.document_id,
+      name: a.name,
+      role: a.role,
+      bio: a.bio,
+      linkedInUrl: a.linked_in_url ?? null,
+      basedIn: a.based_in ?? null,
+      headshotId: headshotByAuthor.get(a.id) ?? null,
+    }));
+    const documentIdByAuthorRow = new Map(authorRows.map((a) => [a.id, a.document_id]));
 
-  const postEntries = posts.map((p) => ({
-    documentId: p.documentId,
-    locale: p.locale ?? null,
-    slug: p.slug,
-    status: statusOf(p),
-    authorDocumentId: p.author?.documentId ?? null,
-    reviewedByDocumentId: p.reviewedBy?.documentId ?? null,
-    legacy: Object.fromEntries(LEGACY_POST_FIELDS.map((f) => [f, p[f] ?? null])),
-  }));
+    const [postRows] = await db.query(
+      `SELECT p.*,
+              (SELECT COUNT(*) FROM blog_posts_cmps c WHERE c.entity_id = p.id AND c.field = 'content') AS content_blocks,
+              (SELECT l.author_id FROM blog_posts_author_lnk l WHERE l.blog_post_id = p.id LIMIT 1) AS author_row,
+              (SELECT l.author_id FROM blog_posts_reviewed_by_lnk l WHERE l.blog_post_id = p.id LIMIT 1) AS reviewed_by_row
+         FROM blog_posts p`
+    );
 
-  for (const a of authorEntries) {
-    const wrote = postEntries.filter((p) => p.authorDocumentId === a.documentId).length;
-    const reviewed = postEntries.filter((p) => p.reviewedByDocumentId === a.documentId).length;
-    console.log(`author "${a.name}": ${wrote} authored / ${reviewed} reviewed post version(s)`);
+    const emptyContent = postRows.filter((p) => Number(p.content_blocks) === 0);
+    if (emptyContent.length > 0) {
+      for (const p of emptyContent) console.error(`${p.slug} (${p.published_at ? 'published' : 'draft'}): empty \`content\` dynamic zone`);
+      throw new Error(
+        `${emptyContent.length} blog-post version(s) have no \`content\` blocks. Move their \`body\` into the content zone before removing \`body\`.`
+      );
+    }
+
+    const postEntries = postRows.map((p) => ({
+      documentId: p.document_id,
+      locale: p.locale ?? null,
+      slug: p.slug,
+      status: p.published_at ? 'published' : 'draft',
+      authorDocumentId: documentIdByAuthorRow.get(p.author_row) ?? null,
+      reviewedByDocumentId: documentIdByAuthorRow.get(p.reviewed_by_row) ?? null,
+      legacy: {
+        body: p.body ?? null,
+        inlineCtaHeading: p.inline_cta_heading ?? null,
+        inlineCtaBody: p.inline_cta_body ?? null,
+        inlineCtaButtonText: p.inline_cta_button_text ?? null,
+        imageCaption: p.image_caption ?? null,
+        editorialDisclaimer: p.editorial_disclaimer ?? null,
+        focusKeyword: p.focus_keyword ?? null,
+      },
+    }));
+
+    for (const a of authorEntries) {
+      const wrote = postEntries.filter((p) => p.authorDocumentId === a.documentId).length;
+      const reviewed = postEntries.filter((p) => p.reviewedByDocumentId === a.documentId).length;
+      console.log(`author "${a.name}": ${wrote} authored / ${reviewed} reviewed post version(s)`);
+    }
+    console.log(`exporting ${authorEntries.length} author(s) and ${postEntries.length} blog-post version(s) to ${MAP_PATH}`);
+    if (DRY_RUN) {
+      console.log(JSON.stringify({ authors: authorEntries, posts: postEntries.map(({ legacy, ...rest }) => rest) }, null, 2));
+      return;
+    }
+    fs.writeFileSync(MAP_PATH, JSON.stringify({ exportedAt: new Date().toISOString(), authors: authorEntries, posts: postEntries }, null, 2));
+    console.log('done. Now deploy the merged person schema, reboot, then run `apply`.');
+  } finally {
+    await db.end();
   }
-  console.log(`exporting ${authorEntries.length} author(s) and ${postEntries.length} blog-post version(s) to ${MAP_PATH}`);
-  if (DRY_RUN) {
-    console.log(JSON.stringify({ authors: authorEntries, posts: postEntries.map(({ legacy, ...rest }) => rest) }, null, 2));
-    return;
-  }
-  fs.writeFileSync(MAP_PATH, JSON.stringify({ exportedAt: new Date().toISOString(), authors: authorEntries, posts: postEntries }, null, 2));
-  console.log('done. Now deploy the merged person schema, reboot, then run `apply`.');
 }
 
 /** All rows (draft + published) of every person, grouped by documentId. */
@@ -251,10 +305,12 @@ async function main() {
     throw new Error('Usage: node scripts/migrate-authors-to-people.js <export|apply> [--dry-run]');
   }
 
+  // `export` must not boot Strapi (see header); only `apply` needs the app.
+  if (mode === 'export') return exportPass();
+
   const app = await createStrapi(await compileStrapi()).load();
   try {
-    if (mode === 'export') await exportPass(app);
-    else await applyPass(app);
+    await applyPass(app);
   } finally {
     await app.destroy();
   }
