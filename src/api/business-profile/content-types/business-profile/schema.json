@@ -5,7 +5,7 @@
     "singularName": "business-profile",
     "pluralName": "business-profiles",
     "displayName": "Business Profile",
-    "description": "Site-wide business facts (office, hours, stats) shown on location and marketing pages. There is exactly one entry. Real people live in the separate `person` collection, not here."
+    "description": "Site-wide business facts (office, hours, stats) shown on location and marketing pages. There is exactly one entry. Real people (team members and blog authors) live in the separate `person` collection, not here."
   },
   "options": {
     "draftAndPublish": true
@@ -46,11 +46,6 @@
       "type": "component",
       "repeatable": false,
       "component": "business.office"
-    },
-    "pressMentions": {
-      "type": "component",
-      "repeatable": true,
-      "component": "location.string-item"
     }
   }
 }

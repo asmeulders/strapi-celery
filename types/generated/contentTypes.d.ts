@@ -440,49 +440,6 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
-export interface ApiAuthorAuthor extends Struct.CollectionTypeSchema {
-  collectionName: 'authors';
-  info: {
-    displayName: 'Author';
-    pluralName: 'authors';
-    singularName: 'author';
-  };
-  options: {
-    draftAndPublish: false;
-  };
-  attributes: {
-    authorPageUrl: Schema.Attribute.String;
-    basedIn: Schema.Attribute.String;
-    bio: Schema.Attribute.Text & Schema.Attribute.Required;
-    blogPosts: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::blog-post.blog-post'
-    >;
-    createdAt: Schema.Attribute.DateTime;
-    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-    credential: Schema.Attribute.String;
-    headshot: Schema.Attribute.Media<'images'>;
-    linkedInUrl: Schema.Attribute.String;
-    locale: Schema.Attribute.String & Schema.Attribute.Private;
-    localizations: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::author.author'
-    > &
-      Schema.Attribute.Private;
-    name: Schema.Attribute.String & Schema.Attribute.Required;
-    publishedAt: Schema.Attribute.DateTime;
-    reviewedPosts: Schema.Attribute.Relation<
-      'oneToMany',
-      'api::blog-post.blog-post'
-    >;
-    role: Schema.Attribute.String & Schema.Attribute.Required;
-    updatedAt: Schema.Attribute.DateTime;
-    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
-      Schema.Attribute.Private;
-  };
-}
-
 export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   collectionName: 'blog_posts';
   info: {
@@ -494,14 +451,14 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
-    author: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
-    body: Schema.Attribute.Blocks & Schema.Attribute.Required;
+    author: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
     canonicalUrl: Schema.Attribute.String;
     cardTitle: Schema.Attribute.String;
     category: Schema.Attribute.Relation<'manyToOne', 'api::category.category'>;
     content: Schema.Attribute.DynamicZone<
       ['blog.rich-text', 'blog.comparison-table', 'blog.inline-cta']
-    >;
+    > &
+      Schema.Attribute.Required;
     coverImage: Schema.Attribute.Media<
       'images' | 'files' | 'videos' | 'audios'
     > &
@@ -513,13 +470,7 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     dateModified: Schema.Attribute.Date & Schema.Attribute.Required;
     datePublished: Schema.Attribute.Date & Schema.Attribute.Required;
     dek: Schema.Attribute.Text;
-    editorialDisclaimer: Schema.Attribute.Text;
     faq: Schema.Attribute.Component<'blog.faq-item', true>;
-    focusKeyword: Schema.Attribute.String;
-    imageCaption: Schema.Attribute.String;
-    inlineCtaBody: Schema.Attribute.Text;
-    inlineCtaButtonText: Schema.Attribute.String;
-    inlineCtaHeading: Schema.Attribute.String;
     keyTakeaways: Schema.Attribute.Component<'blog.key-takeaway', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -534,8 +485,7 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
     ogImage: Schema.Attribute.Media<'images'>;
     ogTitle: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    reviewedBy: Schema.Attribute.Relation<'manyToOne', 'api::author.author'>;
-    scheduledPublishDate: Schema.Attribute.Date;
+    reviewedBy: Schema.Attribute.Relation<'manyToOne', 'api::person.person'>;
     slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
     sources: Schema.Attribute.Component<'blog.source-item', true>;
     targetLocation: Schema.Attribute.String;
@@ -550,7 +500,7 @@ export interface ApiBusinessProfileBusinessProfile
   extends Struct.SingleTypeSchema {
   collectionName: 'business_profiles';
   info: {
-    description: 'Site-wide business facts (office, hours, stats) shown on location and marketing pages. There is exactly one entry. Real people live in the separate `person` collection, not here.';
+    description: 'Site-wide business facts (office, hours, stats) shown on location and marketing pages. There is exactly one entry. Real people (team members and blog authors) live in the separate `person` collection, not here.';
     displayName: 'Business Profile';
     pluralName: 'business-profiles';
     singularName: 'business-profile';
@@ -576,7 +526,6 @@ export interface ApiBusinessProfileBusinessProfile
     office: Schema.Attribute.Component<'business.office', false>;
     phoneDisplay: Schema.Attribute.String;
     phoneTel: Schema.Attribute.String;
-    pressMentions: Schema.Attribute.Component<'location.string-item', true>;
     publishedAt: Schema.Attribute.DateTime;
     rating: Schema.Attribute.String;
     reviewCount: Schema.Attribute.String;
@@ -635,7 +584,6 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
   };
   attributes: {
     children: Schema.Attribute.Relation<'oneToMany', 'api::location.location'>;
-    contentBlocks: Schema.Attribute.Blocks;
     county: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -643,8 +591,6 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     deals: Schema.Attribute.Component<'location.deal', true>;
     faqs: Schema.Attribute.Component<'location.faq', true>;
     hasPage: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
-    heroImage: Schema.Attribute.Media<'images'>;
-    heroImageAlt: Schema.Attribute.String;
     homesBought: Schema.Attribute.String;
     landmarks: Schema.Attribute.Component<'location.string-item', true>;
     latitude: Schema.Attribute.Decimal;
@@ -654,9 +600,7 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
       'api::location.location'
     > &
       Schema.Attribute.Private;
-    locationType: Schema.Attribute.Enumeration<
-      ['state', 'county', 'city', 'neighborhood']
-    > &
+    locationType: Schema.Attribute.Enumeration<['state', 'city']> &
       Schema.Attribute.Required;
     longitude: Schema.Attribute.Decimal;
     marketCommentary: Schema.Attribute.Text;
@@ -674,7 +618,6 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
     population: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
     slug: Schema.Attribute.String & Schema.Attribute.Required;
-    sortOrder: Schema.Attribute.Integer;
     testimonials: Schema.Attribute.Component<'location.testimonial', true>;
     topMarkets: Schema.Attribute.Relation<
       'manyToMany',
@@ -691,7 +634,7 @@ export interface ApiLocationLocation extends Struct.CollectionTypeSchema {
 export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
   collectionName: 'people';
   info: {
-    description: "A real team member, linked to the locations they personally service by office or living area. Also the About page's team roster, unfiltered.";
+    description: 'A real team member or blog author/reviewer. Linked to the locations they personally service, and to the blog posts they wrote or reviewed \u2014 a person gets a /blog/author/<slug> page only if they have at least one. `showOnAbout` controls the About page team roster.';
     displayName: 'Person';
     pluralName: 'people';
     singularName: 'person';
@@ -702,11 +645,14 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
   attributes: {
     basedIn: Schema.Attribute.String;
     bio: Schema.Attribute.Text & Schema.Attribute.Required;
+    blogPosts: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-post.blog-post'
+    >;
     brokerLicense: Schema.Attribute.String;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    initials: Schema.Attribute.String & Schema.Attribute.Required;
     linkedInUrl: Schema.Attribute.String;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -721,7 +667,13 @@ export interface ApiPersonPerson extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     photo: Schema.Attribute.Media<'images'>;
     publishedAt: Schema.Attribute.DateTime;
+    reviewedPosts: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::blog-post.blog-post'
+    >;
     role: Schema.Attribute.String & Schema.Attribute.Required;
+    showOnAbout: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
     sortOrder: Schema.Attribute.Integer;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
@@ -1240,7 +1192,6 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
-      'api::author.author': ApiAuthorAuthor;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::business-profile.business-profile': ApiBusinessProfileBusinessProfile;
       'api::category.category': ApiCategoryCategory;
