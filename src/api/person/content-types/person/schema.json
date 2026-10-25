@@ -5,7 +5,7 @@
     "singularName": "person",
     "pluralName": "people",
     "displayName": "Person",
-    "description": "A real team member, linked to the locations they personally service by office or living area. Also the About page's team roster, unfiltered."
+    "description": "A real team member or blog author/reviewer. Linked to the locations they personally service, and to the blog posts they wrote or reviewed — a person gets a /blog/author/<slug> page only if they have at least one. `showOnAbout` controls the About page team roster."
   },
   "options": {
     "draftAndPublish": true
@@ -16,8 +16,9 @@
       "type": "string",
       "required": true
     },
-    "initials": {
-      "type": "string",
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
       "required": true
     },
     "role": {
@@ -31,7 +32,9 @@
     "photo": {
       "type": "media",
       "multiple": false,
-      "allowedTypes": ["images"]
+      "allowedTypes": [
+        "images"
+      ]
     },
     "linkedInUrl": {
       "type": "string"
@@ -45,11 +48,27 @@
     "sortOrder": {
       "type": "integer"
     },
+    "showOnAbout": {
+      "type": "boolean",
+      "default": false
+    },
     "locations": {
       "type": "relation",
       "relation": "manyToMany",
       "target": "api::location.location",
       "inversedBy": "people"
+    },
+    "blogPosts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-post.blog-post",
+      "mappedBy": "author"
+    },
+    "reviewedPosts": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::blog-post.blog-post",
+      "mappedBy": "reviewedBy"
     }
   }
 }

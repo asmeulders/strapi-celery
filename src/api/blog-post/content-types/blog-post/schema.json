@@ -38,13 +38,13 @@
     "author": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::author.author",
+      "target": "api::person.person",
       "inversedBy": "blogPosts"
     },
     "reviewedBy": {
       "type": "relation",
       "relation": "manyToOne",
-      "target": "api::author.author",
+      "target": "api::person.person",
       "inversedBy": "reviewedPosts"
     },
     "datePublished": {
@@ -70,9 +70,6 @@
       "type": "string",
       "required": true
     },
-    "imageCaption": {
-      "type": "string"
-    },
     "ogImage": {
       "type": "media",
       "multiple": false,
@@ -85,26 +82,14 @@
       "component": "blog.key-takeaway",
       "repeatable": true
     },
-    "body": {
-      "type": "blocks",
-      "required": true
-    },
-    "inlineCtaHeading": {
-      "type": "string"
-    },
-    "inlineCtaBody": {
-      "type": "text"
-    },
-    "inlineCtaButtonText": {
-      "type": "string"
-    },
     "content": {
       "type": "dynamiczone",
       "components": [
         "blog.rich-text",
         "blog.comparison-table",
         "blog.inline-cta"
-      ]
+      ],
+      "required": true
     },
     "faq": {
       "type": "component",
@@ -115,9 +100,6 @@
       "type": "component",
       "component": "blog.source-item",
       "repeatable": true
-    },
-    "editorialDisclaimer": {
-      "type": "text"
     },
     "metaTitle": {
       "type": "string",
@@ -130,9 +112,6 @@
     "canonicalUrl": {
       "type": "string"
     },
-    "focusKeyword": {
-      "type": "string"
-    },
     "ogTitle": {
       "type": "string"
     },
@@ -142,9 +121,6 @@
     "noindex": {
       "type": "boolean",
       "default": false
-    },
-    "scheduledPublishDate": {
-      "type": "date"
     }
   }
 }

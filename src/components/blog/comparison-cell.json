@@ -9,11 +9,6 @@
     "value": {
       "type": "string",
       "required": true
-    },
-    "highlight": {
-      "type": "string",
-      "customField": "plugin::color-picker.color",
-      "description": "Optional color applied to this cell's text, saved as a hex string. Leave empty for no highlight."
     }
   }
 }

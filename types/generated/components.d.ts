@@ -7,8 +7,6 @@ export interface BlogComparisonCell extends Struct.ComponentSchema {
     icon: 'stack';
   };
   attributes: {
-    highlight: Schema.Attribute.String &
-      Schema.Attribute.CustomField<'plugin::color-picker.color'>;
     value: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }

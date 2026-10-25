@@ -23,9 +23,7 @@
       "type": "enumeration",
       "enum": [
         "state",
-        "county",
-        "city",
-        "neighborhood"
+        "city"
       ],
       "required": true
     },
@@ -53,15 +51,9 @@
     "metaDescription": {
       "type": "text"
     },
-    "contentBlocks": {
-      "type": "blocks"
-    },
     "hasPage": {
       "type": "boolean",
       "default": true
-    },
-    "sortOrder": {
-      "type": "integer"
     },
     "ogImage": {
       "type": "media",
@@ -69,16 +61,6 @@
       "allowedTypes": [
         "images"
       ]
-    },
-    "heroImage": {
-      "type": "media",
-      "multiple": false,
-      "allowedTypes": [
-        "images"
-      ]
-    },
-    "heroImageAlt": {
-      "type": "string"
     },
     "homesBought": {
       "type": "string"

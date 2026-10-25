@@ -1,5 +1,13 @@
 # Task: extend the `location` content type for state and city pages
 
+> **Historical — completed and superseded.** This was a one-off brief; the current contract is the site repo's
+> `docs/strapi-location-schema.md`, `docs/strapi-person-schema.md` and `docs/strapi-blog-schema.md`. Since it was written:
+> the county level was flattened (`locationType` is now only `state` / `city`); `sortOrder`, `heroImage`, `heroImageAlt`,
+> `contentBlocks`, `market`, `offerMath`, `recentSellers`, `faq.question`, `regionName`, `driveTime`, `mapEmbedSrc`,
+> `answerBlock`, `localIntro` and `ownerOrigin` were removed; and the `author` type was merged into `person`
+> (`blog-post.author` / `reviewedBy` now target `person`). The production revalidation webhook must fire for
+> **Location, Person, Blog Post, Category and Business Profile** events, not just Location.
+
 This is a one-off task brief for Claude Code working in this repo (Strapi 5). Read it fully, then do the steps in order. Do not push or open a PR; leave changes uncommitted (or committed locally if asked) for the user to review.
 
 ## Context

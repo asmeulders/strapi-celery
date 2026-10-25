@@ -1,6 +1,7 @@
 /**
- * Seeds 6 mock real-estate blog posts (plus 2 authors) for design/QA.
- * Idempotent: authors are matched by name, posts by slug.
+ * Seeds 6 mock real-estate blog posts (plus 2 author people and their
+ * categories) for design/QA. Idempotent: people and categories are matched by
+ * slug, posts by slug.
  *
  *   node scripts/seed-blogs.js
  *
@@ -11,10 +12,9 @@ const path = require('path');
 const { createStrapi, compileStrapi } = require('@strapi/strapi');
 
 const POST_UID = 'api::blog-post.blog-post';
-const AUTHOR_UID = 'api::author.author';
+const PERSON_UID = 'api::person.person';
+const CATEGORY_UID = 'api::category.category';
 const IMAGE_DIR = path.join(__dirname, 'seed-images');
-const DISCLAIMER =
-  'Sample content for design and QA purposes only. Figures and names are illustrative and are not real market data or professional advice.';
 
 // --- blocks helpers -------------------------------------------------------
 const t = (text) => ({ type: 'text', text });
@@ -31,17 +31,13 @@ const authors = [
   {
     name: 'Dana Whitfield',
     role: 'Broker Associate',
-    credential: 'Licensed Real Estate Broker, 14 years experience',
     bio: 'Dana has guided more than 400 sellers through listing, negotiation and closing. She writes about pricing strategy and getting homes market-ready.',
-    authorPageUrl: '/about/dana-whitfield',
     linkedInUrl: 'https://www.linkedin.com/in/example-dana-whitfield',
   },
   {
     name: 'Marcus Ellery',
     role: 'Real Estate Attorney',
-    credential: 'J.D., Real Estate Law',
     bio: 'Marcus advises buyers, sellers and investors on contracts, disclosures and closings, and reviews our legal and process content for accuracy.',
-    authorPageUrl: '/about/marcus-ellery',
     linkedInUrl: 'https://www.linkedin.com/in/example-marcus-ellery',
   },
 ];
@@ -59,7 +55,6 @@ const posts = [
     dateModified: '2026-09-10',
     dek: 'Three ways to sell, three very different trade-offs in price, speed, effort and risk. Here is how to choose.',
     coverImageAlt: 'Miniature house model resting on a wooden table next to a set of house keys',
-    imageCaption: 'The right selling route depends on your timeline and your net proceeds.',
     keyTakeaways: [
       'Listing with an agent typically nets the highest sale price but takes the longest.',
       'FSBO saves on commission but shifts marketing, negotiation and paperwork onto you.',
@@ -102,7 +97,6 @@ const posts = [
       { question: 'Can I get a cash offer and list with an agent?', answer: 'Yes. Many sellers collect a cash offer first to use as a floor, then list with an agent to see whether the open market beats it.' },
     ],
     sources: ['Sample source: Industry association seller profile (illustrative).', 'Sample source: Local MLS days-on-market report (illustrative).'],
-    focusKeyword: 'sell home agent vs fsbo vs cash',
   },
   {
     image: 'staging.jpg',
@@ -116,7 +110,6 @@ const posts = [
     dateModified: '2026-07-15',
     dek: 'You do not need a full renovation. These low-cost staging changes make buyers linger and offers come in sooner.',
     coverImageAlt: 'Bright staged living room with a tan leather sofa, plants and pendant lights',
-    imageCaption: 'Neutral colors, natural light and clear surfaces help buyers picture themselves in the space.',
     keyTakeaways: [
       'Declutter first; it is the cheapest change with the biggest impact.',
       'Maximize natural light and fresh, neutral paint.',
@@ -146,7 +139,6 @@ const posts = [
       { question: 'Do I need to stage a vacant home?', answer: 'Empty rooms can feel smaller and colder in photos. Staging key rooms such as the living room and primary bedroom is often worthwhile.' },
     ],
     sources: ['Sample source: Staging industry survey (illustrative).'],
-    focusKeyword: 'home staging tips',
   },
   {
     image: 'market-snapshot.jpg',
@@ -160,7 +152,6 @@ const posts = [
     dateModified: '2026-09-18',
     dek: 'Inventory is rising, days on market are stretching and pricing strategy matters more than it did a year ago.',
     coverImageAlt: 'Modern glass high-rise buildings against a clear evening sky',
-    imageCaption: 'A more balanced market rewards realistic pricing.',
     keyTakeaways: [
       'More listings mean buyers have more choice, so pricing accuracy matters.',
       'Well-presented homes in popular neighborhoods still move quickly.',
@@ -185,7 +176,6 @@ const posts = [
       { question: 'Is fall a good time to sell?', answer: 'It can be. Competition from new listings is lower than in spring, and buyers who are out looking tend to be motivated.' },
     ],
     sources: ['Sample source: Regional MLS monthly statistics (illustrative).'],
-    focusKeyword: 'seattle housing market',
   },
   {
     image: 'mortgage-rates.jpg',
@@ -199,7 +189,6 @@ const posts = [
     dateModified: '2026-09-12',
     dek: 'Even if you are not buying, interest rates shape who can afford your home. Here is how to read the shifts.',
     coverImageAlt: 'Laptop displaying a financial analytics dashboard with charts',
-    imageCaption: 'Monthly payments, not list prices, drive what buyers can afford.',
     keyTakeaways: [
       'A small rate change can move a buyer’s monthly payment noticeably.',
       'Rate drops tend to bring more buyers into the market, increasing competition.',
@@ -225,7 +214,6 @@ const posts = [
       { question: 'What is a rate buydown?', answer: 'A buydown is prepaid interest, often funded by the seller, that lowers the buyer’s mortgage rate for a period of time or for the life of the loan.' },
     ],
     sources: ['Sample source: Weekly mortgage rate survey (illustrative).'],
-    focusKeyword: 'mortgage rates home sellers',
   },
   {
     image: 'closing-costs.jpg',
@@ -239,7 +227,6 @@ const posts = [
     dateModified: '2026-09-01',
     dek: 'Know what you will pay and what you must disclose before you sign, so nothing derails your closing.',
     coverImageAlt: 'Person signing documents at a desk with a pen',
-    imageCaption: 'Read every document before you sign it.',
     keyTakeaways: [
       'Sellers usually pay agent commissions, transfer taxes and any agreed credits.',
       'Disclosure rules vary by state; incomplete disclosures can lead to legal claims.',
@@ -274,7 +261,6 @@ const posts = [
       { question: 'What happens if I forget to disclose a defect?', answer: 'You could face claims after closing, including for repair costs or damages. Disclose anything you know and keep records.' },
     ],
     sources: ['Sample source: State real estate commission disclosure guide (illustrative).', 'Sample source: Title and escrow association overview (illustrative).'],
-    focusKeyword: 'seller closing costs',
   },
   {
     image: 'rental-property.jpg',
@@ -288,7 +274,6 @@ const posts = [
     dateModified: '2026-08-20',
     dek: 'Cap rate, cash flow and reserves: the numbers every first-time investor should run before making an offer.',
     coverImageAlt: 'Craftsman-style house glowing at dusk with lights on inside',
-    imageCaption: 'A great-looking property still has to pencil out.',
     keyTakeaways: [
       'Estimate net operating income using realistic vacancy and maintenance figures.',
       'Cap rate compares properties; cash-on-cash return reflects your financing.',
@@ -322,28 +307,25 @@ const posts = [
       { question: 'How much should I reserve for repairs?', answer: 'Many investors set aside several months of expenses plus an annual maintenance budget. Older properties may need more.' },
     ],
     sources: ['Sample source: Landlord and property management guide (illustrative).'],
-    focusKeyword: 'evaluate rental property',
   },
 ];
 
 // --- content zone -----------------------------------------------------------
-// The legacy flat comparisonTable field (agentColumn/agentPositive, etc.) was
-// removed from the blog-post schema in favor of the `content` dynamic zone's
-// blog.comparison-table component (generalized columns + a per-cell highlight
-// color). Post authoring below keeps the old flat `comparisonTable` shape
-// since it reads better as sample data; this converts it at seed time.
+// Posts are authored above with flat `body` / `comparisonTable` / `inlineCta*`
+// keys since they read better as sample data; none of those are blog-post
+// fields. buildContentZone converts them into the `content` dynamic zone
+// (blog.rich-text, blog.comparison-table, blog.inline-cta) at seed time.
 function toComparisonTableBlock(rows) {
   const columnLabels = ['List with an agent', 'Sell it yourself (FSBO)', 'Cash buyer (TrueNorth)'];
-  const highlight = (positive) => (positive ? '#16A34A' : '#C0392B');
   return {
     __component: 'blog.comparison-table',
     columns: columnLabels.map((label) => ({ label })),
     rows: rows.map((row) => ({
       label: row.label,
       cells: [
-        { value: row.agentColumn, highlight: highlight(row.agentPositive) },
-        { value: row.fsboColumn, highlight: highlight(row.fsboPositive) },
-        { value: row.cashColumn, highlight: highlight(row.cashPositive) },
+        { value: row.agentColumn },
+        { value: row.fsboColumn },
+        { value: row.cashColumn },
       ],
     })),
   };
@@ -382,6 +364,19 @@ async function upload(strapi, file) {
   return uploaded;
 }
 
+// Must match slugifyHeading() in the Next.js app (src/lib/blogContent.ts).
+const slugify = (text) =>
+  text
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+async function findOrCreate(strapi, uid, data, options = {}) {
+  const [existing] = await strapi.documents(uid).findMany({ filters: { slug: data.slug }, limit: 1 });
+  return existing || (await strapi.documents(uid).create({ data, ...options }));
+}
+
 async function main() {
   const host = process.env.DATABASE_HOST || '';
   if (/amazonaws\.com/.test(host) && process.env.ALLOW_REMOTE_SEED !== '1') {
@@ -390,11 +385,16 @@ async function main() {
 
   const app = await createStrapi(await compileStrapi()).load();
   try {
+    // Published, or the posts' author/reviewedBy relations resolve to null on the site.
     const authorIds = {};
     for (const a of authors) {
-      const [existing] = await app.documents(AUTHOR_UID).findMany({ filters: { name: a.name }, limit: 1 });
-      const doc = existing || (await app.documents(AUTHOR_UID).create({ data: a }));
+      const doc = await findOrCreate(app, PERSON_UID, { ...a, slug: slugify(a.name) }, { status: 'published' });
       authorIds[a.name] = doc.documentId;
+    }
+
+    const categoryIds = {};
+    for (const name of new Set(posts.map((post) => post.category))) {
+      categoryIds[name] = (await findOrCreate(app, CATEGORY_UID, { name, slug: slugify(name) })).documentId;
     }
 
     for (const { image, author, reviewedBy, ...post } of posts) {
@@ -408,24 +408,23 @@ async function main() {
         continue;
       }
       const cover = await upload(app, image);
-      const { comparisonTable, ...postWithoutLegacyTable } = post;
+      const { body, comparisonTable, inlineCtaHeading, inlineCtaBody, inlineCtaButtonText, category, ...fields } = post;
       await app.documents(POST_UID).create({
         status: 'published',
         data: {
-          ...postWithoutLegacyTable,
+          ...fields,
           slug,
+          category: categoryIds[category],
           author: authorIds[author],
           reviewedBy: reviewedBy ? authorIds[reviewedBy] : null,
           coverImage: cover.id,
           ogImage: cover.id,
           keyTakeaways: post.keyTakeaways.map((text) => ({ text })),
           sources: post.sources.map((text) => ({ text })),
-          editorialDisclaimer: DISCLAIMER,
           metaTitle: post.title.length > 60 ? post.cardTitle : post.title,
           metaDescription: post.dek,
           ogTitle: post.title,
           ogDescription: post.dek,
-          canonicalUrl: `/blog/${slug}`,
           content: buildContentZone(post),
         },
       });
